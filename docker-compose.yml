@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    container_name: rml-bank-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/fake-bank-2?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: technical
+      SPRING_DATASOURCE_PASSWORD: Raditya@123!!
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    container_name: rml-bank-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: fake-bank-2
+      MYSQL_USER: technical
+      MYSQL_PASSWORD: Raditya@123!!
+      MYSQL_ROOT_PASSWORD: root123
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
