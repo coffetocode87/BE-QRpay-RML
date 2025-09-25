@@ -1,13 +1,30 @@
-oot@rmldev:~/BE-QRpay-RML# cat docker-compose.yml 
 version: '3.8'
 services:
-  qrcodepaymentrml:
+  app:
     build: .
-    container_name: QRCODEPAYMENTRML
-    image: qrcodepaymentrml:latest
+    container_name: rml-bank-app
     ports:
-      - "3011:8080"
+      - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://203.194.113.220:3306/fake-bank-2?useSSL=false&serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: technical
-      SPRING_DATASOURCE_PASSWORD: Raditya@123!!
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3307/fake-bank-2?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    container_name: rml-bank-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: fake-bank-2
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 
+      MYSQL_ROOT_PASSWORD: 
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:

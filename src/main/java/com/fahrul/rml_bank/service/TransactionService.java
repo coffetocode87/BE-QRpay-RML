@@ -3,6 +3,7 @@ package com.fahrul.rml_bank.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fahrul.rml_bank.dto.TransferResponse;
 import com.fahrul.rml_bank.model.Account;
 import com.fahrul.rml_bank.model.Transaksi;
 import com.fahrul.rml_bank.repository.AccountRepository;
@@ -22,8 +23,8 @@ public class TransactionService {
     }
 
     @Transactional
-    public void transfer(Integer accountIdPengirim, String rekeningPengirim,
-                         String rekeningPenerima, Double jumlah) {
+    public TransferResponse transfer(Integer accountIdPengirim, String rekeningPengirim,
+                                      String rekeningPenerima, Double jumlah) {
 
         if (jumlah <= 0) throw new RuntimeException("Jumlah transfer harus > 0");
 
@@ -66,5 +67,16 @@ public class TransactionService {
                 .tujuanTransaksi(rekeningPengirim)
                 .accountId(penerima.getAccountId())
                 .build());
+
+        // return JSON response
+        return new TransferResponse(
+                "success",
+                "Transfer berhasil",
+                jumlah,
+                rekeningPengirim,
+                rekeningPenerima,
+                pengirim.getSaldo(),
+                penerima.getSaldo()
+        );
     }
 }

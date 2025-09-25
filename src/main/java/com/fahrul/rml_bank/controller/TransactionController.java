@@ -1,8 +1,12 @@
 package com.fahrul.rml_bank.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.fahrul.rml_bank.dto.TransferResponse;
 import com.fahrul.rml_bank.service.TransactionService;
 import com.fahrul.rml_bank.service.TransferRequest;
 
@@ -10,24 +14,24 @@ import com.fahrul.rml_bank.service.TransferRequest;
 @RequestMapping("/api/transactions")
 public class TransactionController {
 
-    private final TransactionService txService;
+	private final TransactionService txService;
 
-    public TransactionController(TransactionService txService) {
-        this.txService = txService;
-    }
+	public TransactionController(TransactionService txService) {
+		this.txService = txService;
+	}
 
-    @PostMapping("/transfer")
-    public ResponseEntity<?> transfer(@RequestBody TransferRequest req) {
-        try {
-            txService.transfer(
-                    req.account_id_pengirim(),
-                    req.nomor_rekening_pengirim(),
-                    req.nomor_rekening_penerima(),
-                    req.jumlah_transfer()
-            );
-            return ResponseEntity.ok("Transfer sukses");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
-        }
-    }
+	@PostMapping("/transfer")
+	public ResponseEntity<?> transfer(@RequestBody TransferRequest req) {
+		try {
+			TransferResponse response = txService.transfer(req.account_id_pengirim(), req.nomor_rekening_pengirim(),
+					req.nomor_rekening_penerima(), req.jumlah_transfer());
+			return ResponseEntity.ok(response);
+		} catch (Exception e) {
+			Map<String, Object> errorResponse = new HashMap<>();
+			errorResponse.put("status", "error");
+			errorResponse.put("message", e.getMessage());
+			return ResponseEntity.badRequest().body(errorResponse);
+		}
+	}
+
 }
